@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<p><a class="btn btn-default" href="{% url 'api_station_list' %}">Station Listing</a></p>
+<table class="table">
+<tr>
+<td>ID</td><td>Link</td>
+    <td>name</td>
+    <td>created</td>
+    <td>last_updated</td>
+    <td>type</td>
+    <td>notes</td>
+    <td>test</td>
+    <td>position</td>
+    <td>country</td>
+    <td>state</td>
+    <td>county</td>
+    <td>community</td>
+    <td>city</td>
+    <td>district</td>
+</tr>
+{% for object in object_list %}
+<tr>
+    <td>{{object.id}}</td>
+    <td><a href="{{object.get_absolute_url}}">{{object}}</a></td>
+    <td>{{ object.name }}</td>
+    <td>{{ object.created }}</td>
+    <td>{{ object.last_updated }}</td>
+    <td>{{ object.type }}</td>
+    <td>{{ object.notes }}</td>
+    <td>{{ object.test }}</td>
+    <td>{{ object.position }}</td>
+    <td>{{ object.country }}</td>
+    <td>{{ object.state }}</td>
+    <td>{{ object.county }}</td>
+    <td>{{ object.community }}</td>
+    <td>{{ object.city }}</td>
+    <td>{{ object.district }}</td>
+</tr>
+{% endfor %}
+</table><a class="btn btn-primary" href="{% url 'api_station_create' %}">Create new Station</a>
+{% endblock %}

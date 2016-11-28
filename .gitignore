@@ -88,3 +88,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Example DB
+EnviroMonitorWeb/db.sqlite3
