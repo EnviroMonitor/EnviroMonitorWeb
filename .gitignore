@@ -91,3 +91,7 @@ ENV/
 
 # Example DB
 EnviroMonitorWeb/db.sqlite3
+
+#ignore pycharm/webstorm files
+.idea
+
