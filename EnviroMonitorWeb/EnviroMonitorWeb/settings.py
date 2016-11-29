@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_generators',
     'geoposition',
+    'crispy_forms',
     'api',
 ]
 

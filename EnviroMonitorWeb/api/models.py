@@ -40,7 +40,6 @@ class Station(models.Model):
     def get_absolute_url(self):
         return reverse('api_station_detail', args=(self.id,))
 
-
     def get_update_url(self):
         return reverse('api_station_update', args=(self.id,))
 
@@ -75,7 +74,6 @@ class Metering(models.Model):
     def get_absolute_url(self):
         return reverse('api_metering_detail', args=(self.id,))
 
-
     def get_update_url(self):
         return reverse('api_metering_update', args=(self.id,))
 
@@ -102,7 +100,6 @@ class Project(models.Model):
 
     def get_absolute_url(self):
         return reverse('api_project_detail', args=(self.slug,))
-
 
     def get_update_url(self):
         return reverse('api_project_update', args=(self.slug,))
