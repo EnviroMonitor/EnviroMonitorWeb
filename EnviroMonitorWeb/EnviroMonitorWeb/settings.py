@@ -129,3 +129,9 @@ STATIC_URL = '/static/'
 # Provide your API key to Google Maps
 GEOPOSITION_GOOGLE_MAPS_API_KEY = ''
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated'
+
+    )
+}
