@@ -1,65 +1,60 @@
-import models
+from .models import Station, Metering, Project
 
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 
 
-class StationSerializer(serializers.ModelSerializer):
-
+class StationSerializer(ModelSerializer):
     class Meta:
-        model = models.Station
+        model = Station
         fields = (
-            'id', 
-            'name', 
-            'created', 
-            'last_updated', 
-            'type', 
-            'notes', 
-            'test', 
-            'position', 
-            'country', 
-            'state', 
-            'county', 
-            'community', 
-            'city', 
-            'district', 
+            'id',
+            'name',
+            'created',
+            'last_updated',
+            'type',
+            'notes',
+            'test',
+            'position',
+            'country',
+            'state',
+            'county',
+            'community',
+            'city',
+            'district',
         )
 
 
-class MeteringSerializer(serializers.ModelSerializer):
-
+class MeteringSerializer(ModelSerializer):
     class Meta:
-        model = models.Metering
+        model = Metering
         fields = (
-            'id', 
-            'created', 
-            'pm01', 
-            'pm25', 
-            'pm10', 
-            'temp_out1', 
-            'temp_out2', 
-            'temp_out3', 
-            'hum_out1', 
-            'hum_out2', 
-            'hum_out3', 
-            'temp_int1', 
-            'hum_int1', 
-            'rssi', 
-            'bpress_out1', 
+            'id',
+            'created',
+            'pm01',
+            'pm25',
+            'pm10',
+            'temp_out1',
+            'temp_out2',
+            'temp_out3',
+            'hum_out1',
+            'hum_out2',
+            'hum_out3',
+            'temp_int1',
+            'hum_int1',
+            'rssi',
+            'bpress_out1',
         )
 
 
-class ProjectSerializer(serializers.ModelSerializer):
-
+class ProjectSerializer(ModelSerializer):
     class Meta:
-        model = models.Project
+        model = Project
         fields = (
-            'slug', 
-            'name', 
-            'created', 
-            'last_updated', 
-            'project_website', 
-            'description', 
-            'logo', 
+            'slug',
+            'name',
+            'created',
+            'last_updated',
+            'project_website',
+            'description',
+            'logo',
         )
-
-

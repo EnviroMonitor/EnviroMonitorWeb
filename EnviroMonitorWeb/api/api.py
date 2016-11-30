@@ -1,29 +1,24 @@
-import models
-import serializers
-from rest_framework import viewsets, permissions
+from .models import Station, Metering, Project
+from .serializers import StationSerializer, MeteringSerializer, ProjectSerializer
+from rest_framework.viewsets import ModelViewSet
 
 
-class StationViewSet(viewsets.ModelViewSet):
+class StationViewSet(ModelViewSet):
     """ViewSet for the Station class"""
 
-    queryset = models.Station.objects.all()
-    serializer_class = serializers.StationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    queryset = Station.objects.all()
+    serializer_class = StationSerializer
 
 
-class MeteringViewSet(viewsets.ModelViewSet):
+class MeteringViewSet(ModelViewSet):
     """ViewSet for the Metering class"""
 
-    queryset = models.Metering.objects.all()
-    serializer_class = serializers.MeteringSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    queryset = Metering.objects.all()
+    serializer_class = MeteringSerializer
 
 
-class ProjectViewSet(viewsets.ModelViewSet):
+class ProjectViewSet(ModelViewSet):
     """ViewSet for the Project class"""
 
-    queryset = models.Project.objects.all()
-    serializer_class = serializers.ProjectSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
