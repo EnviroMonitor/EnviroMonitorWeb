@@ -4,5 +4,4 @@ django-extensions==1.7.5
 django-geoposition==0.3.0
 djangorestframework==3.5.3
 drf-generators==0.2.8
-pkg-resources==0.0.0
 six==1.10.0
