@@ -25,7 +25,7 @@ SECRET_KEY = 'jkwz_t_@4ip6#rw=l7n5#yzcmjs=mf2^8q%v!t2bxd2e!!-e8e'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0']
 
 
 # Application definition
