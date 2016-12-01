@@ -15,3 +15,7 @@ Dockerfile is using python 3.5 image.
 
 ## To run project with docker-compose:
 1. docker-compose up web
+
+## API documentaion.
+For this project we have endpoint /docs with automatically generated documentation to REST API
+I.e. if you are using docker you can hit http://0.0.0.0:8000/docs/ to received full REST API documentation.
