@@ -5,3 +5,4 @@ django-geoposition==0.3.0
 djangorestframework==3.5.3
 drf-generators==0.2.8
 six==1.10.0
+django-rest-swagger==2.1.0
