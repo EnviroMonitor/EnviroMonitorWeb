@@ -1,6 +1,7 @@
 from .models import Station, Metering, Project
 from .serializers import StationSerializer, MeteringSerializer, ProjectSerializer
 from rest_framework.viewsets import ModelViewSet
+from .filters import StationFilterSet, MeteringFilterSet, ProjectFilterSet
 
 
 class StationViewSet(ModelViewSet):
@@ -8,13 +9,14 @@ class StationViewSet(ModelViewSet):
 
     queryset = Station.objects.all()
     serializer_class = StationSerializer
-
+    filter_class = StationFilterSet
 
 class MeteringViewSet(ModelViewSet):
     """ViewSet for the Metering class"""
 
     queryset = Metering.objects.all()
     serializer_class = MeteringSerializer
+    filter_class = MeteringFilterSet
 
 
 class ProjectViewSet(ModelViewSet):
@@ -22,3 +24,4 @@ class ProjectViewSet(ModelViewSet):
 
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    filter_class = ProjectFilterSet

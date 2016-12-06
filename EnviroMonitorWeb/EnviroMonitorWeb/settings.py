@@ -132,10 +132,10 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.AdminRenderer',
         'rest_framework_xml.renderers.XMLRenderer',
     ),
-
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
-
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
-
+    'PAGE_SIZE': 10,
 }

@@ -55,4 +55,3 @@ class ProjectDetailView(DetailView):
 class ProjectUpdateView(UpdateView):
     model = Project
     form_class = ProjectForm
-
