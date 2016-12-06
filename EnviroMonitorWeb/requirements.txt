@@ -3,5 +3,6 @@ django-crispy-forms==1.6.1
 django-extensions==1.7.5
 django-geoposition==0.3.0
 djangorestframework==3.5.3
+django-filter==1.0.1
 drf-generators==0.2.8
 six==1.10.0
