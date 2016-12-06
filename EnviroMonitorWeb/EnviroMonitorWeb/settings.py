@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'drf_generators',
     'geoposition',
     'crispy_forms',
+    'django_filters',
     'api',
 ]
 
@@ -123,11 +124,18 @@ STATIC_URL = '/static/'
 # Provide your API key to Google Maps
 GEOPOSITION_GOOGLE_MAPS_API_KEY = ''
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_PERMISSION_CLASSES': 'rest_framework.permissions.IsAuthenticated',
-# }
+
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    )
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.AdminRenderer',
+        'rest_framework_xml.renderers.XMLRenderer',
+    ),
+
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+
 }
