@@ -11,6 +11,7 @@ class StationViewSet(ModelViewSet):
     serializer_class = StationSerializer
     filter_class = StationFilterSet
 
+
 class MeteringViewSet(ModelViewSet):
     """ViewSet for the Metering class"""
 

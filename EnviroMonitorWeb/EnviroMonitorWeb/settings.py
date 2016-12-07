@@ -37,10 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_swagger',
-    'drf_generators',
-    'geoposition',
     'crispy_forms',
     'django_filters',
+    'drf_generators',
+    'geoposition',
     'api',
 ]
 
@@ -133,7 +133,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.AdminRenderer',
         'rest_framework_xml.renderers.XMLRenderer',
     ),
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
