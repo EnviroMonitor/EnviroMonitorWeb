@@ -7,3 +7,4 @@ djangorestframework-xml==1.3.0
 django-filter==1.0.1
 drf-generators==0.2.8
 six==1.10.0
+django-rest-swagger==2.1.0
