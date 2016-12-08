@@ -1,9 +1,11 @@
 from .models import Station, Metering, Project
 
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, HiddenField, CurrentUserDefault
 
 
 class StationSerializer(ModelSerializer):
+    owner = HiddenField(default=CurrentUserDefault())
+
     class Meta:
         model = Station
         fields = (
@@ -21,6 +23,7 @@ class StationSerializer(ModelSerializer):
             'community',
             'city',
             'district',
+            'owner'
         )
 
 
@@ -47,6 +50,8 @@ class MeteringSerializer(ModelSerializer):
 
 
 class ProjectSerializer(ModelSerializer):
+    project_admin = HiddenField(default=CurrentUserDefault())
+
     class Meta:
         model = Project
         fields = (
@@ -57,4 +62,5 @@ class ProjectSerializer(ModelSerializer):
             'project_website',
             'description',
             'logo',
+            'project_admin'
         )
