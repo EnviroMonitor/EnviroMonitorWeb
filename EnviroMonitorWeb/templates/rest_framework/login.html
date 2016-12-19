@@ -1,0 +1,7 @@
+{% extends "rest_framework/login_base.html" %}
+{% load static %}
+{%  block bootstrap_theme %}
+    <link rel="stylesheet" href="{% static "css/flaty.css" %}" type="text/css">
+{% endblock %}
+{% block branding %}<h3 style="margin: 0 0 20px;">Air Monitor REST API</h3>{% endblock %}
+{# Override this template in your own templates directory to customize #}

@@ -1,0 +1,13 @@
+{% extends "rest_framework/admin.html" %}
+{% load static %}
+{% block bootstrap_theme %}
+    <link rel="stylesheet" href="{% static "css/flaty.css" %}" type="text/css">
+{% endblock %}
+
+{% block bootstrap_navbar_variant %}navbar-inverse{% endblock %}
+
+{% block branding %}
+{#    <a class='navbar-brand' rel="nofollow">#}
+{#        <img src="{% static "" %}" style="height: 100%">#}
+{#    </a>#}
+{% endblock %}
