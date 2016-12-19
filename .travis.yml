@@ -9,8 +9,8 @@ sudo: required
 services:
   - docker
 
-env:
-  DOCKER_COMPOSE_VERSION: 1.6.2
+install:
+- docker-compose build web
 
 
 # command to install dependencies
