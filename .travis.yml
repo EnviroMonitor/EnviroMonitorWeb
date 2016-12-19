@@ -10,7 +10,7 @@ services:
   - docker
 
 install:
-- docker-compose build web
+  - docker-compose build web
 
 
 # command to install dependencies
