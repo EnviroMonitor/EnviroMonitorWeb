@@ -3,9 +3,9 @@ version: '2'
 services:
 
   web:
-    build: .
+    build: ./EnviroMonitorWeb/
     volumes:
-      - .:/code
+      - ./EnviroMonitorWeb/:/code
     ports:
       - "8000:8000"
     command: ./conf/up_web.sh
