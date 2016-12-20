@@ -4,8 +4,13 @@ services:
 
   web:
     build: ./EnviroMonitorWeb/
+    user: root
     volumes:
       - ./EnviroMonitorWeb/:/code
     ports:
       - "8000:8000"
     command: ./conf/up_web.sh
+
+  tests:
+    extends: web
+    command: py.test -s
