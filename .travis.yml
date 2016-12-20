@@ -10,9 +10,11 @@ services:
   - docker
 
 # to build container
-install:
-  - docker-compose build web
+# install:
+#  - docker-compose build web
 
 # command to run tests
 script:
+  - docker-compose build web
   - docker-compose run web py.test
+  - docker-compose run web py.test --cov=. --cov-report=xml
