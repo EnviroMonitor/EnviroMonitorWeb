@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'crispy_forms',
     'django_filters',
-    'drf_generators',
+    'django_extensions',
     'geoposition',
     'api',
 ]
