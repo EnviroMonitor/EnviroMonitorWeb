@@ -1,57 +1,40 @@
-from django.views.generic import DetailView, ListView, UpdateView, CreateView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework import response, schemas
+from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
+
 from .models import Station, Metering, Project
-from .forms import StationForm, MeteringForm, ProjectForm
+from .serializers import StationSerializer, MeteringSerializer, ProjectSerializer
+from .filters import StationFilterSet, MeteringFilterSet, ProjectFilterSet
 
 
-class StationListView(ListView):
-    model = Station
+class StationViewSet(ModelViewSet):
+    """ViewSet for the Station class"""
+
+    queryset = Station.objects.all()
+    serializer_class = StationSerializer
+    filter_class = StationFilterSet
 
 
-class StationCreateView(CreateView):
-    model = Station
-    form_class = StationForm
+class MeteringViewSet(ModelViewSet):
+    """ViewSet for the Metering class"""
+
+    queryset = Metering.objects.all()
+    serializer_class = MeteringSerializer
+    filter_class = MeteringFilterSet
 
 
-class StationDetailView(DetailView):
-    model = Station
+class ProjectViewSet(ModelViewSet):
+    """ViewSet for the Project class"""
+
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    filter_class = ProjectFilterSet
 
 
-class StationUpdateView(UpdateView):
-    model = Station
-    form_class = StationForm
+@api_view()
+@renderer_classes([OpenAPIRenderer, SwaggerUIRenderer])
+def schema_view(request):
+    generator = schemas.SchemaGenerator(title='Air Monitor REST API')
+    return response.Response(generator.get_schema(request=request))
 
-
-class MeteringListView(ListView):
-    model = Metering
-
-
-class MeteringCreateView(CreateView):
-    model = Metering
-    form_class = MeteringForm
-
-
-class MeteringDetailView(DetailView):
-    model = Metering
-
-
-class MeteringUpdateView(UpdateView):
-    model = Metering
-    form_class = MeteringForm
-
-
-class ProjectListView(ListView):
-    model = Project
-
-
-class ProjectCreateView(CreateView):
-    model = Project
-    form_class = ProjectForm
-
-
-class ProjectDetailView(DetailView):
-    model = Project
-
-
-class ProjectUpdateView(UpdateView):
-    model = Project
-    form_class = ProjectForm
