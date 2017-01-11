@@ -1,0 +1,18 @@
+version: '2'
+services:
+  web:
+    build: ./web/
+    volumes:
+      - ../:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=EnviroMonitorWeb.settings.dev
+
+  postgis:
+    image: mdillon/postgis:9.5
+    environment:
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_USER=docker
+      - POSTGRES_DB=docker
+      - PGDATA=/var/lib/postgresql/9.5/main/

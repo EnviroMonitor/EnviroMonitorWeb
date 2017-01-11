@@ -22,9 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'jkwz_t_@4ip6#rw=l7n5#yzcmjs=mf2^8q%v!t2bxd2e!!-e8e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0']
+DEBUG = False
 
 # Application definition
 
@@ -41,7 +39,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_extensions',
     'geoposition',
-    'api',
+    'EnviroMonitorWeb.api',
 ]
 
 MIDDLEWARE = [
@@ -79,8 +77,11 @@ WSGI_APPLICATION = 'EnviroMonitorWeb.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'docker',
+        'USER': 'docker',
+        'PASSWORD': 'docker',
+        'HOST': 'postgis'
     }
 }
 

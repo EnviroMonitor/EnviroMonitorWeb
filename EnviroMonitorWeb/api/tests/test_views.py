@@ -1,9 +1,9 @@
 from rest_framework.reverse import reverse
 from rest_framework.test import APIRequestFactory, APITestCase
-from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
+from rest_framework.status import HTTP_200_OK
 
 from .factories import ProjectFactory
-from api.serializers import ProjectSerializer
+from EnviroMonitorWeb.api.serializers import ProjectSerializer
 
 import pytest
 
