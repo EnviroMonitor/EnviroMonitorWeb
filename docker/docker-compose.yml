@@ -5,7 +5,7 @@ services:
       file: ./docker/docker-compose-base.yml
       service: web
     links:
-        - postgis
+      - postgis
 
   postgis:
     extends:

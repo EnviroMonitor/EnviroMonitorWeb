@@ -5,7 +5,8 @@ from .models import Station, Metering, Project
 class StationFilterSet(FilterSet):
     class Meta:
         model = Station
-        fields = ['name', 'test', 'country', 'state', 'county', 'community', 'owner', 'project']
+        fields = ['name', 'is_in_test_mode', 'country', 'state', 'county', 'community', 'owner', 'project', 'created',
+                  'updated']
 
 
 class MeteringFilterSet(FilterSet):
@@ -17,4 +18,4 @@ class MeteringFilterSet(FilterSet):
 class ProjectFilterSet(FilterSet):
     class Meta:
         model = Project
-        fields = ['name']
+        fields = ['name', 'created', 'updated']

@@ -1,6 +1,6 @@
-from .models import Station, Metering, Project
-
 from rest_framework.serializers import ModelSerializer, HiddenField, CurrentUserDefault
+
+from .models import Station, Metering, Project, MeteringHistory
 
 
 class StationSerializer(ModelSerializer):
@@ -12,10 +12,11 @@ class StationSerializer(ModelSerializer):
             'id',
             'name',
             'created',
-            'last_updated',
+            'updated',
             'type',
             'notes',
-            'test',
+            'is_in_test_mode',
+            'altitude',
             'position',
             'country',
             'state',
@@ -23,7 +24,8 @@ class StationSerializer(ModelSerializer):
             'community',
             'city',
             'district',
-            'owner'
+            'owner',
+            'project'
         )
 
 
@@ -31,7 +33,6 @@ class MeteringSerializer(ModelSerializer):
     class Meta:
         model = Metering
         fields = (
-            'id',
             'created',
             'pm01',
             'pm25',
@@ -39,28 +40,33 @@ class MeteringSerializer(ModelSerializer):
             'temp_out1',
             'temp_out2',
             'temp_out3',
+            'temp_int1',
             'hum_out1',
             'hum_out2',
             'hum_out3',
-            'temp_int1',
             'hum_int1',
             'rssi',
             'bpress_out1',
         )
 
 
+class MeteringHistorySerializer(ModelSerializer):
+    class Meta(MeteringSerializer.Meta):
+        model = MeteringHistory
+
+
 class ProjectSerializer(ModelSerializer):
-    project_admin = HiddenField(default=CurrentUserDefault())
+    owner = HiddenField(default=CurrentUserDefault())
 
     class Meta:
         model = Project
         fields = (
-            'slug',
             'name',
+            'slug',
             'created',
-            'last_updated',
-            'project_website',
+            'updated',
+            'website',
             'description',
             'logo',
-            'project_admin'
+            'owner'
         )

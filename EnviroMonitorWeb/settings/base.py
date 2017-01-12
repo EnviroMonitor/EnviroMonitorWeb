@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'rest_framework',
     'rest_framework_swagger',
     'crispy_forms',
@@ -77,7 +78,7 @@ WSGI_APPLICATION = 'EnviroMonitorWeb.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'docker',
         'USER': 'docker',
         'PASSWORD': 'docker',
