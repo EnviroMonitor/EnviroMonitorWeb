@@ -40,11 +40,11 @@ class MeteringSerializer(ModelSerializer):
             'temp_out1',
             'temp_out2',
             'temp_out3',
-            'temp_int1',
+            'temp_int_air1',
             'hum_out1',
             'hum_out2',
             'hum_out3',
-            'hum_int1',
+            'hum_int_air1',
             'rssi',
             'bpress_out1',
         )

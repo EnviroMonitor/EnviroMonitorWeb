@@ -180,6 +180,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='station',
             name='type',
-            field=models.CharField(choices=[('1', 'EM0'), ('2', 'EM1'), ('3', 'CUSTOM')], max_length=1),
+            field=models.CharField(choices=[('1', 'EM0.1'), ('2', 'EM1'), ('3', 'CUSTOM')], max_length=1),
         ),
     ]

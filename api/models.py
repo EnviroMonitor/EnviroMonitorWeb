@@ -53,7 +53,7 @@ class MeteringBase(models.Model):
         default=None,
         null=True
     )
-    temp_int1 = models.FloatField(
+    temp_int_air1 = models.FloatField(
         help_text='Internal temperature sensor1 (air sucked by PM sensor), in C.'
     )
     hum_out1 = models.FloatField(
@@ -71,7 +71,7 @@ class MeteringBase(models.Model):
         default=None,
         null=True
     )
-    hum_int1 = models.FloatField(
+    hum_int_air1 = models.FloatField(
         help_text='Internal relative humidity sensor1 (air sucked by PM sensor), in %.'
     )
     rssi = models.FloatField(
@@ -100,7 +100,7 @@ class Station(TimeTrackableBase):
     EM1 = '2'
     CUSTOM = '3'
     TYPE_CHOICES = (
-        (EM0, 'EM0'),
+        (EM0, 'EM0.1'),
         (EM1, 'EM1'),
         (CUSTOM, 'CUSTOM'),
     )
