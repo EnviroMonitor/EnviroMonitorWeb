@@ -10,9 +10,9 @@ services:
       - DJANGO_SETTINGS_MODULE=EnviroMonitorWeb.settings.dev
 
   postgis:
-    image: mdillon/postgis:9.5
+    image: mdillon/postgis:9.4
     environment:
       - POSTGRES_PASSWORD=docker
       - POSTGRES_USER=docker
       - POSTGRES_DB=docker
-      - PGDATA=/var/lib/postgresql/9.5/main/
+      - PGDATA=/var/lib/postgresql/9.4/main/

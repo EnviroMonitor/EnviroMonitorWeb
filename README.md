@@ -11,9 +11,9 @@ You can up and runnig this project in a traditional way with virtual environment
 ## To start development:
 1. install [docker](https://docs.docker.com/#/components) and [docker-compose](https://docs.docker.com/compose/install/)
 2. copy/symlink docker-compose.yml `cp ./EnviroMonitorWeb/docker-compose.yml ./docker-compose.yml`
-3. `docker-compose build`
-4. `docker-compose run --rm web migrate`
-5. `docker-compose run --rm web createsuperuser`
+3. run `docker-compose build` to build web container
+4. run `docker-compose run --rm web python manage.py migrate`
+5. run `docker-compose run --rm web python manage.py createsuperuser`
 
 ## To run project:
 1. docker-compose up
@@ -21,9 +21,7 @@ You can up and runnig this project in a traditional way with virtual environment
 3. press `CTRL+C` to stop
 
 ## Notes:
-1. You can use `docker-compose run --rm web CMD` as `python manage.py CMD` equivalent. 
-2. To list mange.py commands just run `docker-copose run --rm web managepy`
-3. To run command inside container You can use run entrypoint command like `docker-compose run --rm web run py.test --conv=.`
+1. To run command inside container You can use run entrypoint command like `docker-compose run --rm web py.test --conv=.`
 
 ## API documentaion:
 Check http://localhost:8000/api/v1/docs/ to received full REST API documentation.

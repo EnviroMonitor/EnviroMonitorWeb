@@ -4,7 +4,4 @@ services:
 script:
   - ln -s ./docker/docker-compose.yml ./docker-compose.yml
   - docker-compose build
-  - docker-compose up -d postgis
-  # wait for postgis to create extension and create empty database
-  - sleep 10
-  - docker-compose run --rm web run py.test --cov=.
+  - docker-compose run --rm web py.test --cov=.

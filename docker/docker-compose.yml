@@ -12,4 +12,4 @@ services:
       file: ./docker/docker-compose-base.yml
       service: postgis
     volumes:
-      - ./docker/volumes/postgis9.5/:/var/lib/postgresql/9.5/
+      - ./docker/volumes/postgis9.4/:/var/lib/postgresql/9.4/

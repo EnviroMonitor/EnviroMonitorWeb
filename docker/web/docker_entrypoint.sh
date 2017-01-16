@@ -1,17 +1,11 @@
 #!/bin/sh
-set -e
 
-cd /code/
+# wait for postgis to start
+/wait-for-it.sh postgis:5432
 
-if [ "$1" = 'runserver' ]; then
-    exec python manage.py runserver 0.0.0.0:8000
-elif [ "$1" = 'managepy' ]; then
-    exec python manage.py
-elif [ "$1" = 'run' ]; then
-    # exec all but fist argument
-    # http://stackoverflow.com/a/9057699/479931
-    shift
-    exec "${@}"
-else
-    exec python manage.py "$@"
-fi
+"${@}"
+
+# change owner of files after running command
+# eg. python manage.py makemigrations
+# ommit ./docker/ directory
+find /code/ -user root 2>/dev/null | grep -v './docker' | tr "\n" "\0" | xargs -r0 chown ${DEFAULT_UID}:${DEFAULT_GID}
