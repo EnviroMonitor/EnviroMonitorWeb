@@ -1,6 +1,6 @@
 from factory.django import DjangoModelFactory
 
-from EnviroMonitorWeb.api.models import Station, Metering, Project
+from api.models import Station, Metering, Project
 
 
 class ProjectFactory(DjangoModelFactory):

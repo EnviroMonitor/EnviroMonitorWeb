@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_extensions',
     'geoposition',
-    'EnviroMonitorWeb.api',
+    'api',
 ]
 
 MIDDLEWARE = [

@@ -3,7 +3,7 @@ from rest_framework.test import APIRequestFactory, APITestCase
 from rest_framework.status import HTTP_200_OK
 
 from .factories import ProjectFactory
-from EnviroMonitorWeb.api.serializers import ProjectSerializer
+from api.serializers import ProjectSerializer
 
 import pytest
 
