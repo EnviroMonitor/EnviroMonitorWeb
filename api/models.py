@@ -91,7 +91,24 @@ class MeteringBase(models.Model):
         return u'%s' % self.created
 
 
-class Station(TimeTrackableBase):
+class LocationBase(models.Model):
+    """
+    Base Model for location features.
+    """
+
+    position = gis_models.PointField(help_text='Exact position on map.', default=None, null=True)
+    country = models.CharField(max_length=255, default='')
+    state = models.CharField(help_text='administration level 1', max_length=255, default='')
+    county = models.CharField(help_text='administration level 2', max_length=255, default='')
+    community = models.CharField(help_text='administration level 3', max_length=255, default='')
+    city = models.CharField(help_text='administration level 4', max_length=255, default='')
+    district = models.CharField(help_text='administration level 5', max_length=255, default='')
+
+    class Meta:
+        abstract = True
+
+
+class Station(TimeTrackableBase, LocationBase):
     """
     Model representing sensor station. Can be grouped using Project model.
     """
@@ -118,16 +135,7 @@ class Station(TimeTrackableBase):
         default=generate_token,
         unique=True
     )
-
-    # Location Fields
     altitude = models.FloatField(help_text='Altitude of sensor location.', default=0)
-    position = gis_models.PointField(help_text='Exact sensor position on map.')
-    country = models.CharField(max_length=255)
-    state = models.CharField(max_length=255)
-    county = models.CharField(max_length=255)
-    community = models.CharField(max_length=255)
-    city = models.CharField(max_length=255)
-    district = models.CharField(max_length=255)
 
     # Relationship Fields
     owner = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -170,7 +178,7 @@ class MeteringHistory(MeteringBase):
 
     Idea:
     * background job runs once per hour
-    * job calculates avarage of readings from Metering entries older than 2 weeks (mean
+    * job calculates avarage of readings from Metering entries older than 2 weeks (avarage
     should be calulated per hour basis, one MeteringHistory entry per hour)
     * entries that was used to calculate avarage should be cleaned from Metering database
     """
@@ -182,7 +190,7 @@ class MeteringHistory(MeteringBase):
         return reverse('api_meteringhistory_detail', args=(self.created,))
 
 
-class Project(TimeTrackableBase):
+class Project(TimeTrackableBase, LocationBase):
     """
     Model used for grouping sensor stations. Eg. by local anti-smog groups.
     """
