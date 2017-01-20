@@ -1,29 +1,145 @@
-from django.core.urlresolvers import reverse
-from django_extensions.db.fields import AutoSlugField
 from django.conf import settings
-from django.db import models as models
+from django.contrib.gis.db import models as gis_models
+from django.core.urlresolvers import reverse
+from django.db import models
+from django_extensions.db.fields import AutoSlugField
+
+from .utils import generate_token
 
 
-class Station(models.Model):
+class TimeTrackableBase(models.Model):
+    """
+    Base Model for time trackable features.
+    """
 
-    # Fields
-    name = models.CharField(max_length=255)
     created = models.DateTimeField(auto_now_add=True, editable=False)
-    last_updated = models.DateTimeField(auto_now=True, editable=False)
-    type = models.TextField(max_length=100)
-    notes = models.TextField(max_length=100)
-    test = models.BooleanField()
-    position = models.TextField(max_length=100)
-    country = models.TextField(max_length=30)
-    state = models.TextField(max_length=100)
-    county = models.TextField(max_length=100)
-    community = models.TextField(max_length=100)
-    city = models.TextField(max_length=100)
-    district = models.TextField(max_length=100)
+    updated = models.DateTimeField(auto_now=True, editable=False)
+
+    class Meta:
+        abstract = True
+
+
+class MeteringBase(models.Model):
+    """
+    Base Model for Metering and MeteringHistory models.
+    """
+
+    # we do not need id field
+    # http://stackoverflow.com/questions/4814167/storing-time-series-data-relational-or-non/4884384#4884384
+    created = models.DateTimeField(auto_now_add=True, primary_key=True)
+
+    # Data Fields
+    pm01 = models.FloatField(
+        help_text='PM 0.1 in ug/m^3'
+    )
+    pm25 = models.FloatField(
+        help_text='PM 2.5 in ug/m^3'
+    )
+    pm10 = models.FloatField(
+        help_text='PM 10 in ug/m^3'
+    )
+    temp_out1 = models.FloatField(
+        help_text='Outside temperature sensor1, in C.'
+    )
+    temp_out2 = models.FloatField(
+        help_text='Outside temperature sensor2, optional, in C.',
+        blank=True,
+        default=None,
+        null=True
+    )
+    temp_out3 = models.FloatField(
+        help_text='Outside temperature sensor3, optional, in C.',
+        blank=True,
+        default=None,
+        null=True
+    )
+    temp_int_air1 = models.FloatField(
+        help_text='Internal temperature sensor1 (air sucked by PM sensor), in C.'
+    )
+    hum_out1 = models.FloatField(
+        help_text='Outside relative humidity sensor1, in %.'
+    )
+    hum_out2 = models.FloatField(
+        help_text='Outside relative humidity sensor2, optional, in %.',
+        blank=True,
+        default=None,
+        null=True
+    )
+    hum_out3 = models.FloatField(
+        help_text='Outside relative humidity sensor3, optional, in %.',
+        blank=True,
+        default=None,
+        null=True
+    )
+    hum_int_air1 = models.FloatField(
+        help_text='Internal relative humidity sensor1 (air sucked by PM sensor), in %.'
+    )
+    rssi = models.FloatField(
+        help_text='RSSI of WiFi (signal strength). For debugging "vanishing" stations.'
+    )
+    bpress_out1 = models.FloatField(
+        help_text='Outside absolute barometric pressure sensor1, in hPa.'
+    )
 
     # Relationship Fields
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, )
-    project = models.ForeignKey('api.Project', )
+    station = models.ForeignKey('api.Station')
+
+    class Meta:
+        abstract = True
+
+    def __unicode__(self):
+        return u'%s' % self.created
+
+
+class LocationBase(models.Model):
+    """
+    Base Model for location features.
+    """
+
+    position = gis_models.PointField(help_text='Exact position on map.', default=None, null=True)
+    country = models.CharField(max_length=255, default='')
+    state = models.CharField(help_text='administration level 1', max_length=255, default='')
+    county = models.CharField(help_text='administration level 2', max_length=255, default='')
+    community = models.CharField(help_text='administration level 3', max_length=255, default='')
+    city = models.CharField(help_text='administration level 4', max_length=255, default='')
+    district = models.CharField(help_text='administration level 5', max_length=255, default='')
+
+    class Meta:
+        abstract = True
+
+
+class Station(TimeTrackableBase, LocationBase):
+    """
+    Model representing sensor station. Can be grouped using Project model.
+    """
+
+    EM0 = '1'
+    EM1 = '2'
+    CUSTOM = '3'
+    TYPE_CHOICES = (
+        (EM0, 'EM0.1'),
+        (EM1, 'EM1'),
+        (CUSTOM, 'CUSTOM'),
+    )
+
+    name = models.CharField(max_length=255)
+    type = models.CharField(max_length=1, choices=TYPE_CHOICES)
+    notes = models.CharField(max_length=255)
+    is_in_test_mode = models.BooleanField(
+        help_text='Whether sensor is in test mode or not (all data).',
+        default=False
+    )
+    token = models.CharField(
+        max_length=255,
+        help_text='Token automatically generated while saving model, needed by Station to POST any data.',
+        default=generate_token,
+        unique=True
+    )
+    altitude = models.FloatField(help_text='Altitude of sensor location.', default=0)
+
+    # Relationship Fields
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
+    project = models.ForeignKey('api.Project')
 
     class Meta:
         ordering = ('-created',)
@@ -38,53 +154,55 @@ class Station(models.Model):
         return reverse('api_station_update', args=(self.id,))
 
 
-class Metering(models.Model):
+class Metering(MeteringBase):
+    """
+    Model representing data submitted by sensor station.
+    """
 
-    # Fields
-    created = models.DateTimeField(auto_now_add=True)
-    pm01 = models.FloatField()
-    pm25 = models.FloatField()
-    pm10 = models.FloatField()
-    temp_out1 = models.FloatField()
-    temp_out2 = models.FloatField(max_length=100)
-    temp_out3 = models.FloatField()
-    hum_out1 = models.FloatField()
-    hum_out2 = models.FloatField()
-    hum_out3 = models.FloatField()
-    temp_int1 = models.FloatField()
-    hum_int1 = models.TextField(max_length=100)
-    rssi = models.FloatField()
-    bpress_out1 = models.FloatField()
-
-    # Relationship Fields
-    station = models.ForeignKey('api.Station', )
+    is_test = models.BooleanField(
+        help_text='Whether entry was created using Sensor test mode (Sensor.is_in_test_mode=True).',
+        default=False,
+        db_index=True
+    )
 
     class Meta:
         ordering = ('-created',)
 
-    def __unicode__(self):
-        return u'%s' % self.id
+    def get_absolute_url(self):
+        return reverse('api_metering_detail', args=(self.created,))
+
+
+class MeteringHistory(MeteringBase):
+    """
+    Model representing history entries calculated from Metering entries, resolution 1 hour.
+
+    Idea:
+    * background job runs once per hour
+    * job calculates avarage of readings from Metering entries older than 2 weeks (avarage
+    should be calulated per hour basis, one MeteringHistory entry per hour)
+    * entries that was used to calculate avarage should be cleaned from Metering database
+    """
+
+    class Meta:
+        ordering = ('-created',)
 
     def get_absolute_url(self):
-        return reverse('api_metering_detail', args=(self.id,))
-
-    def get_update_url(self):
-        return reverse('api_metering_update', args=(self.id,))
+        return reverse('api_meteringhistory_detail', args=(self.created,))
 
 
-class Project(models.Model):
+class Project(TimeTrackableBase, LocationBase):
+    """
+    Model used for grouping sensor stations. Eg. by local anti-smog groups.
+    """
 
-    # Fields
     name = models.CharField(max_length=255)
     slug = AutoSlugField(populate_from='name', blank=True)
-    created = models.DateTimeField(auto_now_add=True, editable=False)
-    last_updated = models.DateTimeField(auto_now=True, editable=False)
-    project_website = models.URLField()
-    description = models.TextField(max_length=4000)
+
+    website = models.URLField()
+    description = models.TextField()
     logo = models.FilePathField(max_length=100, blank=True)
 
-    # Relationship Fields
-    project_admin = models.ForeignKey(settings.AUTH_USER_MODEL, )
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
 
     class Meta:
         ordering = ('-created',)
@@ -97,5 +215,3 @@ class Project(models.Model):
 
     def get_update_url(self):
         return reverse('api_project_update', args=(self.slug,))
-
-
