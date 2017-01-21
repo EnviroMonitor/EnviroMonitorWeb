@@ -10,10 +10,11 @@ You can up and runnig this project in a traditional way with virtual environment
 
 ## To start development:
 1. install [docker](https://docs.docker.com/#/components) and [docker-compose](https://docs.docker.com/compose/install/)
-2. copy/symlink docker-compose.yml `cp ./EnviroMonitorWeb/docker-compose.yml ./docker-compose.yml`
-3. run `docker-compose build` to build web container
-4. run `docker-compose run --rm web python manage.py migrate`
-5. run `docker-compose run --rm web python manage.py createsuperuser`
+2. clone and change working dir to project root `cd ~/ && git clone git@github.com:EnviroMonitor/EnviroMonitorWeb.git && cd EnviroMonitorWeb`
+3. copy/symlink docker-compose.yml `cp ./docker/docker-compose.yml ./docker-compose.yml` (we want to be able to override as dev)
+4. run `docker-compose build` to build web container
+5. run `docker-compose run --rm web python manage.py migrate`
+6. run `docker-compose run --rm web python manage.py createsuperuser`
 
 ## To run project:
 1. docker-compose up
