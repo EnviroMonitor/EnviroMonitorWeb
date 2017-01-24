@@ -1,14 +1,10 @@
-language: python
-
-python:
-  - "2.7"
-  - "3.5"
-
 sudo: required
-
 services:
   - docker
-
 script:
-  - docker-compose build web
-  - docker-compose run web py.test --cov=.
+  - ln -s ./docker/docker-compose.yml ./docker-compose.yml
+  - docker-compose build
+  # test if we are able to setup database schema properly
+  # should catch most typical errors in migrations
+  - docker-compose run --rm web python manage.py migrate
+  - docker-compose run --rm web py.test --cov=.
