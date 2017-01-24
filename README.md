@@ -22,7 +22,8 @@ You can up and runnig this project in a traditional way with virtual environment
 3. press `CTRL+C` to stop
 
 ## Notes:
-1. To run command inside container You can use run entrypoint command like `docker-compose run --rm web py.test --conv=.`
+1. To run command inside container you can use run entrypoint command. 
+I.e. `docker-compose run --rm web py.test -s --cov=. --cov-report=html` to run unit tests and check coverage.
 
 ## API documentaion:
 Check http://localhost:8000/api/v1/docs/ to received full REST API documentation.
