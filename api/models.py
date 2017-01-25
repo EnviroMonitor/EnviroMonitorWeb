@@ -7,9 +7,9 @@ from django_extensions.db.fields import AutoSlugField
 from .utils import generate_token
 
 
-class TimeTrackableBase(models.Model):
+class AbstractTimeTrackable(models.Model):
     """
-    Base Model for time trackable features.
+    Abstract model for time trackable features.
     """
 
     created = models.DateTimeField(auto_now_add=True, editable=False)
@@ -19,9 +19,9 @@ class TimeTrackableBase(models.Model):
         abstract = True
 
 
-class MeteringBase(models.Model):
+class AbstractMetering(models.Model):
     """
-    Base Model for Metering and MeteringHistory models.
+    Abstract model for Metering and MeteringHistory models.
     """
 
     # we do not need id field
@@ -91,9 +91,9 @@ class MeteringBase(models.Model):
         return u'%s' % self.created
 
 
-class LocationBase(models.Model):
+class AbstractLocation(models.Model):
     """
-    Base Model for location features.
+    Abstract model for location features.
     """
 
     position = gis_models.PointField(help_text='Exact position on map.', default=None, null=True)
@@ -108,7 +108,7 @@ class LocationBase(models.Model):
         abstract = True
 
 
-class Station(TimeTrackableBase, LocationBase):
+class Station(AbstractTimeTrackable, AbstractLocation):
     """
     Model representing sensor station. Can be grouped using Project model.
     """
@@ -154,7 +154,7 @@ class Station(TimeTrackableBase, LocationBase):
         return reverse('api_station_update', args=(self.id,))
 
 
-class Metering(MeteringBase):
+class Metering(AbstractMetering):
     """
     Model representing data submitted by sensor station.
     """
@@ -172,7 +172,7 @@ class Metering(MeteringBase):
         return reverse('api_metering_detail', args=(self.created,))
 
 
-class MeteringHistory(MeteringBase):
+class MeteringHistory(AbstractMetering):
     """
     Model representing history entries calculated from Metering entries, resolution 1 hour.
 
@@ -190,7 +190,7 @@ class MeteringHistory(MeteringBase):
         return reverse('api_meteringhistory_detail', args=(self.created,))
 
 
-class Project(TimeTrackableBase, LocationBase):
+class Project(AbstractTimeTrackable, AbstractLocation):
     """
     Model used for grouping sensor stations. Eg. by local anti-smog groups.
     """
