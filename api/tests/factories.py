@@ -49,6 +49,16 @@ class ProjectFactory(AbstractLocationFactory):
         model = Project
 
 
+class ProjectFactoryForTesting(factory.django.DjangoModelFactory):
+    name = factory.Sequence(lambda n: 'Smogly Project %04d' % n)
+    website = factory.Sequence(lambda n: 'http://%04d.smogly.org' % n)
+    description = factory.Faker('sentence')
+    logo = ''
+
+    class Meta:
+        model = Project
+
+
 class StationFactory(AbstractLocationFactory):
     name = factory.Sequence(lambda n: 'Smogly Station %04d' % n)
     type = factory.fuzzy.FuzzyChoice([type_choice[0] for type_choice in Station.TYPE_CHOICES])
