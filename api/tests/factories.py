@@ -5,8 +5,12 @@ import factory
 import factory.fuzzy
 from django.contrib.auth import get_user_model
 from django.contrib.gis.geos import Point
+from django.contrib.auth.hashers import make_password
 
 from api.models import Station, Metering, MeteringHistory, Project
+
+# http://stackoverflow.com/questions/24748222/django-python-django-login-test-failed-with-factory-boy-and-authtools
+user_password = 'very_dangerous_password'
 
 
 class AbstractLocationFactory(factory.django.DjangoModelFactory):
@@ -36,6 +40,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')
     email = factory.Faker('email')
+    password = make_password(user_password)
 
 
 class ProjectFactory(AbstractLocationFactory):
@@ -49,6 +54,7 @@ class ProjectFactory(AbstractLocationFactory):
         model = Project
 
 
+# factory to deliver data valid for project endpoint
 class ProjectFactoryForTesting(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: 'Smogly Project %04d' % n)
     website = factory.Sequence(lambda n: 'http://%04d.smogly.org' % n)
