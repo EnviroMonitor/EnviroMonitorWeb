@@ -9,7 +9,7 @@ from ..serializers import ProjectSerializer
 class ProjectApiTests(APITestCase):
     def setUp(self):
         self.user = UserFactory()
-        self.project = ProjectFactory.build(owner=self.user)
+        self.project = ProjectFactory.build()
         self.project_data = ProjectSerializer(self.project).data
         self.project_list_url = reverse('project-list')
 
@@ -23,12 +23,13 @@ class ProjectApiTests(APITestCase):
         self.assertEqual(api_response.status_code, HTTP_201_CREATED)
         self.assertEqual(Project.objects.count(), 1)
 
-        new_project = Project.objects.get()
-        self.assertEqual(new_project.name, self.project_data['name'])
-        self.assertEqual(new_project.website, self.project_data['website'])
-        self.assertEqual(new_project.description, self.project_data['description'])
-        self.assertEqual(new_project.logo, self.project_data['logo'])
-        self.assertEqual(new_project.owner, self.user)
+        created_project = Project.objects.get()
+        created_project_data = ProjectSerializer(created_project).data
+        self.assertEqual(created_project_data['name'], self.project_data['name'])
+        self.assertEqual(created_project_data['website'], self.project_data['website'])
+        self.assertEqual(created_project_data['description'], self.project_data['description'])
+        self.assertEqual(created_project_data['logo'], self.project_data['logo'])
+        self.assertEqual(created_project.owner, self.user)
 
     def test_project_create_anon(self):
         api_response = self.client.post(self.project_list_url, self.project_data, format='json')
@@ -40,13 +41,12 @@ class ProjectApiTests(APITestCase):
 
     def test_project_detail(self):
         self.create_project()
-        new_project = Project.objects.get()
+        created_project = Project.objects.get()
         api_response = self.client.get(
-            reverse('project-detail', kwargs={'pk': new_project.pk})
+            reverse('project-detail', kwargs={'pk': created_project.pk})
         )
         self.assertEqual(api_response.status_code, HTTP_200_OK)
         self.assertEqual(api_response.data['name'], self.project_data['name'])
         self.assertEqual(api_response.data['website'], self.project_data['website'])
         self.assertEqual(api_response.data['description'], self.project_data['description'])
         self.assertEqual(api_response.data['logo'], self.project_data['logo'])
-
