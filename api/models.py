@@ -200,7 +200,7 @@ class Project(AbstractTimeTrackable, AbstractLocation):
 
     website = models.URLField()
     description = models.TextField()
-    logo = models.ImageField(max_length=100, blank=True)
+    logo = models.ImageField(max_length=100, upload_to='project/', blank=True)
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL)
 

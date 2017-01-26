@@ -61,12 +61,8 @@ class ProjectFactory(AbstractLocationFactory):
                 )
                 # save using ImageField
                 destination_file_name = '%s.jpg' % Faker().uuid4()
-                destination_path = os.path.join(
-                    'project',
-                    destination_file_name
-                )
                 self.logo.save(
-                    destination_path,
+                    destination_file_name,
                     File(
                         open(
                             source_path,
