@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import random
 
 import factory
@@ -6,11 +7,10 @@ import factory.fuzzy
 from django.contrib.auth import get_user_model
 from django.contrib.gis.geos import Point
 from django.contrib.auth.hashers import make_password
+from django.core.files import File
+from faker import Faker
 
 from api.models import Station, Metering, MeteringHistory, Project
-
-# http://stackoverflow.com/questions/24748222/django-python-django-login-test-failed-with-factory-boy-and-authtools
-user_password = 'very_dangerous_password'
 
 
 class AbstractLocationFactory(factory.django.DjangoModelFactory):
@@ -33,33 +33,57 @@ class AbstractLocationFactory(factory.django.DjangoModelFactory):
 
 
 class UserFactory(factory.django.DjangoModelFactory):
+    DEFAULT_PASSWORD = 'very_dangerous_password'
+
     class Meta:
         model = get_user_model()
+        exclude = ('DEFAULT_PASSWORD',)
 
-    username = factory.Sequence(lambda n: 'smoglyuser-%04d' % n)
+    username = factory.LazyFunction(lambda: 'smoglyuser-%s' % Faker().uuid4())
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')
     email = factory.Faker('email')
-    password = make_password(user_password)
+
+    @factory.lazy_attribute
+    def password(self):
+        """
+        http://stackoverflow.com/questions/24748222/django-python-django-login-test-failed-with-factory-boy-and-authtools
+        """
+        return make_password(self.DEFAULT_PASSWORD)
 
 
 class ProjectFactory(AbstractLocationFactory):
     name = factory.Sequence(lambda n: 'Smogly Project %04d' % n)
     website = factory.Sequence(lambda n: 'http://%04d.smogly.org' % n)
-    description = factory.Faker('sentences', nb=3)
-    logo = ''
+    description = factory.Faker('paragraph', nb_sentences=3, variable_nb_sentences=True)
     owner = factory.SubFactory(UserFactory)
 
-    class Meta:
-        model = Project
-
-
-# factory to deliver data valid for project endpoint
-class ProjectFactoryForTesting(factory.django.DjangoModelFactory):
-    name = factory.Sequence(lambda n: 'Smogly Project %04d' % n)
-    website = factory.Sequence(lambda n: 'http://%04d.smogly.org' % n)
-    description = factory.Faker('sentence')
-    logo = ''
+    @factory.post_generation
+    def create_logo(self, create, extracted, **kwargs):
+        if extracted in [None, True]:
+            if create:
+                # add random image from factories assets
+                source_file_name = 'logo{}.jpg'.format(random.randint(1, 4))
+                source_path = os.path.join(
+                    os.path.dirname(__file__),
+                    'assets',
+                    'project',
+                    source_file_name
+                )
+                # save using ImageField
+                destination_file_name = '%s.jpg' % Faker().uuid4()
+                self.logo.save(
+                    destination_file_name,
+                    File(
+                        open(
+                            source_path,
+                            # for python 3.x, we need binary mode
+                            # https://github.com/python-pillow/Pillow/issues/1605#issuecomment-167402651
+                            'rb'
+                        )
+                    )
+                )
+                self.save(update_fields=['logo'])
 
     class Meta:
         model = Project
