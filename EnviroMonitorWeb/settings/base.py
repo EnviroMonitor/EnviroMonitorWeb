@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'docker',
         'USER': 'docker',
         'PASSWORD': 'docker',
-        'HOST': 'postgis'
+        'HOST': 'db'
     }
 }
 

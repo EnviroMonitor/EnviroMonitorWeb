@@ -10,20 +10,20 @@ You can up and runnig this project in a traditional way with virtual environment
 
 ## To start development:
 1. install [docker](https://docs.docker.com/#/components) and [docker-compose](https://docs.docker.com/compose/install/)
-2. clone and change working dir to project root `cd ~/ && git clone git@github.com:EnviroMonitor/EnviroMonitorWeb.git && cd EnviroMonitorWeb`
-3. copy/symlink docker-compose.yml `cp ./docker/docker-compose.yml ./docker-compose.yml` (we want to be able to override as dev)
-4. run `docker-compose build` to build web container
-5. run `docker-compose run --rm web python manage.py migrate`
-6. run `docker-compose run --rm web python manage.py createsuperuser`
+2. run `sudo docker-compose build` to build web container
+3. run `sudo docker-compose up web` to test web and db containers
+5. run `sudo docker-compose run web python manage.py migrate` to apply migrations
+6. run `sudo docker-compose run web python manage.py createsuperuser` to create admin account
 
 ## To run project:
-1. docker-compose up
+1. run `docker-compose up web`
 2. point Your browser to `localhost:8000`
 3. press `CTRL+C` to stop
 
 ## Notes:
 1. To run command inside container you can use run entrypoint command. 
-I.e. `docker-compose run --rm web py.test -s --cov=. --cov-report=html` to run unit tests and check coverage.
+I.e. `sudo docker-compose run web py.test -s --cov=. --cov-report=html` to run unit tests and check coverage.
+I.e. `sudo docker exec -it enviromonitorweb_db_1 psql -U docker -d docker` when you want access to database
 
 ## API documentaion:
 Check http://localhost:8000/api/v1/docs/ to received full REST API documentation.

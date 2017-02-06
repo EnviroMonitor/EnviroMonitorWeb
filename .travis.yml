@@ -1,10 +1,26 @@
 sudo: required
+
+language: python
+
+python:
+  - "3.5"
+
 services:
-  - docker
+    - docker
+
+env:  
+    global:
+        - DOCKER_VERSION=1.13.0-0~ubuntu-trusty
+        - DOCKER_COMPOSE_VERSION=1.10.0
+
+before_install:  
+    # upgrade docker-engine to specific version
+    - sudo apt-get -o Dpkg::Options::="--force-confnew" install -y docker-engine=${DOCKER_VERSION}
+
+    # reinstall docker-compose at specific version
+    - sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    - sudo chmod +x /usr/local/bin/docker-compose
+
 script:
-  - ln -s ./docker/docker-compose.yml ./docker-compose.yml
-  - docker-compose build
-  # test if we are able to setup database schema properly
-  # should catch most typical errors in migrations
-  - docker-compose run --rm web python manage.py migrate
-  - docker-compose run --rm web py.test --cov=.
+    - docker-compose run --rm test
+
