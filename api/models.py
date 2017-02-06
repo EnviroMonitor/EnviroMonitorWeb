@@ -1,3 +1,4 @@
+import uuid
 from django.conf import settings
 from django.contrib.gis.db import models as gis_models
 from django.core.urlresolvers import reverse
@@ -24,9 +25,8 @@ class AbstractMetering(models.Model):
     Abstract model for Metering and MeteringHistory models.
     """
 
-    # we do not need id field
-    # http://stackoverflow.com/questions/4814167/storing-time-series-data-relational-or-non/4884384#4884384
-    created = models.DateTimeField(auto_now_add=True, primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created = models.DateTimeField(auto_now_add=True, db_index=True)
 
     # Data Fields
     pm01 = models.FloatField(
@@ -122,6 +122,7 @@ class Station(AbstractTimeTrackable, AbstractLocation):
         (CUSTOM, 'CUSTOM'),
     )
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     type = models.CharField(max_length=1, choices=TYPE_CHOICES)
     notes = models.CharField(max_length=255)
@@ -169,7 +170,7 @@ class Metering(AbstractMetering):
         ordering = ('-created',)
 
     def get_absolute_url(self):
-        return reverse('api_metering_detail', args=(self.created,))
+        return reverse('api_metering_detail', args=(self.pk,))
 
 
 class MeteringHistory(AbstractMetering):
@@ -187,7 +188,7 @@ class MeteringHistory(AbstractMetering):
         ordering = ('-created',)
 
     def get_absolute_url(self):
-        return reverse('api_meteringhistory_detail', args=(self.created,))
+        return reverse('api_meteringhistory_detail', args=(self.pk,))
 
 
 class Project(AbstractTimeTrackable, AbstractLocation):
@@ -195,6 +196,7 @@ class Project(AbstractTimeTrackable, AbstractLocation):
     Model used for grouping sensor stations. Eg. by local anti-smog groups.
     """
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     slug = AutoSlugField(populate_from='name', blank=True)
 
