@@ -17,7 +17,7 @@ You can up and runnig this project in a traditional way with virtual environment
 
 ## To run project:
 1. run `docker-compose up web`
-2. point Your browser to `localhost:8000`
+2. point Your browser to `localhost:8080`
 3. press `CTRL+C` to stop
 
 ## Notes:
@@ -26,4 +26,4 @@ I.e. `sudo docker-compose run web py.test -s --cov=. --cov-report=html` to run u
 I.e. `sudo docker exec -it enviromonitorweb_db_1 psql -U docker -d docker` when you want access to database
 
 ## API documentaion:
-Check http://localhost:8000/api/v1/docs/ to received full REST API documentation.
+Check http://localhost:8080/api/v1/docs/ to received full REST API documentation.
