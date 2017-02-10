@@ -1,8 +1,18 @@
 from rest_framework.reverse import reverse
-from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_403_FORBIDDEN
+from rest_framework.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT,
+    HTTP_403_FORBIDDEN,
+    HTTP_404_NOT_FOUND
+)
 from rest_framework.test import APITestCase
 
-from .factories import UserFactory, ProjectFactory, Project
+from .factories import (
+    Project,
+    ProjectFactory,
+    UserFactory
+)
 from ..serializers import ProjectSerializer
 
 
@@ -43,10 +53,39 @@ class ProjectApiTests(APITestCase):
         self.create_project()
         created_project = Project.objects.get()
         api_response = self.client.get(
-            reverse('project-detail', kwargs={'pk': created_project.pk})
+            reverse('project-detail', kwargs={'pk': created_project.pk}),
+            format='json'
         )
         self.assertEqual(api_response.status_code, HTTP_200_OK)
         self.assertEqual(api_response.data['name'], self.project_data['name'])
         self.assertEqual(api_response.data['website'], self.project_data['website'])
         self.assertEqual(api_response.data['description'], self.project_data['description'])
         self.assertEqual(api_response.data['logo'], self.project_data['logo'])
+
+    def test_project_detail_id_does_not_exist(self):
+        api_response = self.client.get(
+            reverse('project-detail', kwargs={'pk': 0}),
+            format='json'
+        )
+        self.assertEqual(api_response.status_code, HTTP_404_NOT_FOUND)
+
+    def test_project_detail_patch(self):
+        self.create_project()
+        created_project = Project.objects.get()
+        api_response = self.client.patch(
+            reverse('project-detail', kwargs={'pk': created_project.pk}),
+            {'name': 'new_name'},
+            format='json'
+        )
+        self.assertEqual(api_response.status_code, HTTP_200_OK)
+        self.assertEqual(api_response.data['name'], 'new_name')
+
+    def test_project_detail_delete(self):
+        self.create_project()
+        created_project = Project.objects.get()
+        api_response = self.client.delete(
+            reverse('project-detail', kwargs={'pk': created_project.pk}),
+            format='json'
+        )
+        self.assertEqual(api_response.status_code, HTTP_204_NO_CONTENT)
+        self.assertEqual(Project.objects.count(), 0)
