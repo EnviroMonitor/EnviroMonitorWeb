@@ -13,6 +13,21 @@ from faker import Faker
 from api.models import Station, Metering, MeteringHistory, Project
 
 
+class FuzzyFloatRound(factory.fuzzy.FuzzyFloat):
+    """Random float within a given range with ndigits option, that will round fuzzer to ndigits."""
+
+    def __init__(self, *args, **kwargs):
+        self.ndigits = kwargs.pop('ndigits')
+
+        super(FuzzyFloatRound, self).__init__(*args, **kwargs)
+
+    def fuzz(self):
+        fuzz = super(FuzzyFloatRound, self).fuzz()
+        if self.ndigits:
+            return round(fuzz, self.ndigits)
+        return fuzz
+
+
 class AbstractLocationFactory(factory.django.DjangoModelFactory):
 
     @factory.lazy_attribute
@@ -93,14 +108,13 @@ class StationFactory(AbstractLocationFactory):
     name = factory.Sequence(lambda n: 'Smogly Station %04d' % n)
     type = factory.fuzzy.FuzzyChoice([type_choice[0] for type_choice in Station.TYPE_CHOICES])
     notes = factory.Faker('sentences', nb=3)
-    altitude = factory.fuzzy.FuzzyFloat(0.0, 40.0)
+    altitude = FuzzyFloatRound(0.0, 300.0, ndigits=2)
     project = factory.SubFactory(ProjectFactory, **{
-        'position': factory.SelfAttribute('position'),
-        'country': factory.SelfAttribute('country'),
-        'state': factory.SelfAttribute('state'),
-        'county': factory.SelfAttribute('county'),
-        'community': factory.SelfAttribute('community'),
-        'district': factory.SelfAttribute('district')
+        'country': factory.SelfAttribute('..country'),
+        'state': factory.SelfAttribute('..state'),
+        'county': factory.SelfAttribute('..county'),
+        'community': factory.SelfAttribute('..community'),
+        'district': factory.SelfAttribute('..district')
     })
     owner = factory.SubFactory(UserFactory)
 
@@ -109,19 +123,19 @@ class StationFactory(AbstractLocationFactory):
 
 
 class AbstractMeteringFactory(factory.django.DjangoModelFactory):
-    pm01 = factory.fuzzy.FuzzyFloat(0.0, 150.0)
-    pm25 = factory.fuzzy.FuzzyFloat(0.0, 150.0)
-    pm10 = factory.fuzzy.FuzzyFloat(0.0, 150.0)
-    temp_out1 = factory.fuzzy.FuzzyFloat(-25.0, 30.0)
+    pm01 = FuzzyFloatRound(0.0, 150.0, ndigits=2)
+    pm25 = FuzzyFloatRound(0.0, 150.0, ndigits=2)
+    pm10 = FuzzyFloatRound(0.0, 150.0, ndigits=2)
+    temp_out1 = FuzzyFloatRound(-25.0, 30.0, ndigits=2)
     temp_out2 = factory.SelfAttribute('temp_out1')
     temp_out3 = factory.SelfAttribute('temp_out1')
-    temp_int_air1 = factory.fuzzy.FuzzyFloat(28.0, 30.0)
-    hum_out1 = factory.fuzzy.FuzzyFloat(5.0, 99.0)
+    temp_int_air1 = FuzzyFloatRound(28.0, 30.0, ndigits=2)
+    hum_out1 = FuzzyFloatRound(5.0, 99.0, ndigits=2)
     hum_out2 = factory.SelfAttribute('hum_out1')
     hum_out3 = factory.SelfAttribute('hum_out1')
-    hum_int_air1 = factory.fuzzy.FuzzyFloat(30.0, 35.0)
-    rssi = factory.fuzzy.FuzzyFloat(-100.0, 0.0)
-    bpress_out1 = factory.fuzzy.FuzzyFloat(900, 1100)
+    hum_int_air1 = FuzzyFloatRound(30.0, 35.0, ndigits=2)
+    rssi = FuzzyFloatRound(-100.0, 0.0, ndigits=2)
+    bpress_out1 = factory.fuzzy.FuzzyInteger(900, 1100)
 
     station = factory.SubFactory(StationFactory)
 

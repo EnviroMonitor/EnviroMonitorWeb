@@ -25,7 +25,8 @@ class StationSerializer(ModelSerializer):
             'city',
             'district',
             'owner',
-            'project'
+            'project',
+            'last_metering',
         )
 
 
@@ -68,5 +69,12 @@ class ProjectSerializer(ModelSerializer):
             'website',
             'description',
             'logo',
-            'owner'
+            'position',
+            'country',
+            'state',
+            'county',
+            'community',
+            'city',
+            'district',
+            'owner',
         )
