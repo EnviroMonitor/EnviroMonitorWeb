@@ -3,7 +3,7 @@ from rest_framework.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
-    HTTP_403_FORBIDDEN,
+    HTTP_401_UNAUTHORIZED,
     HTTP_404_NOT_FOUND
 )
 from rest_framework.test import APITestCase
@@ -19,15 +19,30 @@ from .factories import (
 from ..serializers import ProjectSerializer, StationSerializer, MeteringSerializer
 
 
-class ProjectApiTests(APITestCase):
+class UserAuthBase(APITestCase):
     def setUp(self):
         self.user = UserFactory()
+        self.jwt_url = reverse('api-token-auth')
+
+        self.user_data = {
+            'username': self.user.username,
+            'password': UserFactory.DEFAULT_PASSWORD
+        }
+
+    def obtain_token_and_set_auth(self):
+        response = self.client.post(self.jwt_url, self.user_data, format='json')
+        return self.client.credentials(HTTP_AUTHORIZATION='JWT ' + response.data['token'])
+
+
+class ProjectApiTests(UserAuthBase):
+    def setUp(self):
         self.project = ProjectFactory.build()
         self.project_data = ProjectSerializer(self.project).data
         self.project_list_url = reverse('project-list')
+        return super(ProjectApiTests, self).setUp()
 
     def create_project(self):
-        self.client.login(username=self.user.username, password=UserFactory.DEFAULT_PASSWORD)
+        self.obtain_token_and_set_auth()
         return self.client.post(self.project_list_url, self.project_data, format='json')
 
     def assertProjectDataEqual(self, data):
@@ -56,7 +71,7 @@ class ProjectApiTests(APITestCase):
 
     def test_project_create_anon(self):
         api_response = self.client.post(self.project_list_url, self.project_data, format='json')
-        self.assertEqual(api_response.status_code, HTTP_403_FORBIDDEN)
+        self.assertEqual(api_response.status_code, HTTP_401_UNAUTHORIZED)
 
     def test_project_list(self):
         api_response = self.client.get(self.project_list_url)
@@ -101,16 +116,16 @@ class ProjectApiTests(APITestCase):
         self.assertEqual(Project.objects.count(), 0)
 
 
-class StationApiTests(APITestCase):
+class StationApiTests(UserAuthBase):
     def setUp(self):
-        self.user = UserFactory()
         self.existing_project = ProjectFactory.create()
         self.station = StationFactory.build(project=self.existing_project)
         self.station_data = StationSerializer(self.station).data
         self.station_list_url = reverse('station-list')
+        return super(StationApiTests, self).setUp()
 
     def create_station(self):
-        self.client.login(username=self.user.username, password=UserFactory.DEFAULT_PASSWORD)
+        self.obtain_token_and_set_auth()
         return self.client.post(self.station_list_url, self.station_data, format='json')
 
     def assertStationDataEqual(self, data):

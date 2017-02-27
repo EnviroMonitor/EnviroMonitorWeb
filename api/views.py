@@ -1,16 +1,22 @@
 from django.core.cache import cache
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import AllowAny
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework import response, schemas
-from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 from rest_framework.decorators import detail_route
+from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
+from rest_framework_jwt.views import ObtainJSONWebToken
 
 from .models import Station, Metering, Project
 from .serializers import StationSerializer, MeteringSerializer, ProjectSerializer
 from .filters import StationFilterSet, MeteringFilterSet, ProjectFilterSet
 from .exceptions import StationWrongToken
+
+
+class ObtainJWT(ObtainJSONWebToken):
+    authentication_classes = (BasicAuthentication,)
 
 
 class StationViewSet(ModelViewSet):
