@@ -1,5 +1,6 @@
 from django.core.cache import cache
 from rest_framework.authentication import BasicAuthentication
+from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.viewsets import ModelViewSet
@@ -11,9 +12,9 @@ from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 from rest_framework_gis.filters import InBBoxFilter
 from rest_framework_jwt.views import ObtainJSONWebToken
 
-from .models import Station, Metering, Project
-from .serializers import StationSerializer, MeteringSerializer, ProjectSerializer
-from .filters import StationFilterSet, MeteringFilterSet, ProjectFilterSet
+from .models import Station, Metering, MeteringHistory, Project
+from .serializers import StationSerializer, MeteringSerializer, MeteringHistorySerializer, ProjectSerializer
+from .filters import StationFilterSet, MeteringFilterSet, MeteringHistoryFilterSet, ProjectFilterSet
 from .exceptions import StationWrongToken
 
 
@@ -24,12 +25,13 @@ class ObtainJWT(ObtainJSONWebToken):
 class StationViewSet(ModelViewSet):
     """ViewSet for the Station class"""
 
-    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [InBBoxFilter]
+    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [InBBoxFilter, SearchFilter]
     queryset = Station.objects.all()
     serializer_class = StationSerializer
     filter_class = StationFilterSet
     ordering_fields = ('updated', 'created', 'name')
     bbox_filter_field = 'position'
+    search_fields = ('name',)
 
     @detail_route(methods=['post'], permission_classes=[AllowAny], url_path='add-metering')
     def add_metering(self, request, pk=None):
@@ -63,15 +65,25 @@ class MeteringViewSet(ModelViewSet):
     ordering_fields = ('created',)
 
 
+class MeteringHistoryViewSet(ModelViewSet):
+    """ViewSet for the MeteringHistory class"""
+
+    queryset = MeteringHistory.objects.all()
+    serializer_class = MeteringHistorySerializer
+    filter_class = MeteringHistoryFilterSet
+    ordering_fields = ('created',)
+
+
 class ProjectViewSet(ModelViewSet):
     """ViewSet for the Project class"""
 
-    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [InBBoxFilter]
+    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [InBBoxFilter, SearchFilter]
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     filter_class = ProjectFilterSet
     ordering_fields = ('updated', 'created', 'name')
     bbox_filter_field = 'position'
+    search_fields = ('name',)
 
 
 @api_view()
