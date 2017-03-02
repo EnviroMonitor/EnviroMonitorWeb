@@ -1,3 +1,4 @@
+from django.contrib.gis.geos.point import Point
 from rest_framework.reverse import reverse
 from rest_framework.status import (
     HTTP_200_OK,
@@ -30,7 +31,7 @@ class UserAuthBase(APITestCase):
         }
 
     def obtain_token_and_set_auth(self):
-        response = self.client.post(self.jwt_url, self.user_data, format='json')
+        response = self.client.post(self.jwt_url, self.user_data)
         return self.client.credentials(HTTP_AUTHORIZATION='JWT ' + response.data['token'])
 
 
@@ -43,7 +44,7 @@ class ProjectApiTests(UserAuthBase):
 
     def create_project(self):
         self.obtain_token_and_set_auth()
-        return self.client.post(self.project_list_url, self.project_data, format='json')
+        return self.client.post(self.project_list_url, self.project_data)
 
     def assertProjectDataEqual(self, data):
         self.assertEqual(data['name'], self.project_data['name'])
@@ -70,7 +71,7 @@ class ProjectApiTests(UserAuthBase):
         self.assertEqual(created_project.owner, self.user)
 
     def test_project_create_anon(self):
-        api_response = self.client.post(self.project_list_url, self.project_data, format='json')
+        api_response = self.client.post(self.project_list_url, self.project_data)
         self.assertEqual(api_response.status_code, HTTP_401_UNAUTHORIZED)
 
     def test_project_list(self):
@@ -115,6 +116,19 @@ class ProjectApiTests(UserAuthBase):
         self.assertEqual(api_response.status_code, HTTP_204_NO_CONTENT)
         self.assertEqual(Project.objects.count(), 0)
 
+    def test_in_bbox_filter_list_view(self):
+        ProjectFactory.create(position=Point([20, 50]))
+        ProjectFactory.create(position=Point([21, 51]))
+        ProjectFactory.create(position=Point([0, 0]))
+
+        api_response = self.client.get(
+            self.project_list_url,
+            data={
+                'in_bbox': '19, 49, 22, 52'
+            }
+        )
+        self.assertEqual(2, len(api_response.data['results']))
+
 
 class StationApiTests(UserAuthBase):
     def setUp(self):
@@ -126,7 +140,7 @@ class StationApiTests(UserAuthBase):
 
     def create_station(self):
         self.obtain_token_and_set_auth()
-        return self.client.post(self.station_list_url, self.station_data, format='json')
+        return self.client.post(self.station_list_url, self.station_data)
 
     def assertStationDataEqual(self, data):
         self.assertEqual(data['name'], self.station_data['name'])
@@ -169,7 +183,7 @@ class StationApiTests(UserAuthBase):
             reverse('station-add-metering', kwargs={'pk': station.pk}),
             station.token
         )
-        api_response = self.client.post(add_metering_api_url, metering_data, format='json')
+        api_response = self.client.post(add_metering_api_url, metering_data)
         self.assertEqual(api_response.status_code, 200)
         self.assertEqual(station.metering_set.count(), 1)
 
@@ -182,7 +196,7 @@ class StationApiTests(UserAuthBase):
         add_metering_api_url = '{}'.format(
             reverse('station-add-metering', kwargs={'pk': station.pk}),
         )
-        api_response = self.client.post(add_metering_api_url, {}, format='json')
+        api_response = self.client.post(add_metering_api_url, {})
         self.assertEqual(api_response.status_code, 403)
 
     def test_add_metering_wrong_token(self):
@@ -192,7 +206,7 @@ class StationApiTests(UserAuthBase):
             reverse('station-add-metering', kwargs={'pk': station.pk}),
             'xyz'
         )
-        api_response = self.client.post(add_metering_api_url, {}, format='json')
+        api_response = self.client.post(add_metering_api_url, {})
         self.assertEqual(api_response.status_code, 403)
 
     def test_add_metering_wrong_data(self):
@@ -202,5 +216,18 @@ class StationApiTests(UserAuthBase):
             reverse('station-add-metering', kwargs={'pk': station.pk}),
             station.token
         )
-        api_response = self.client.post(add_metering_api_url, {}, format='json')
+        api_response = self.client.post(add_metering_api_url, {})
         self.assertEqual(api_response.status_code, 400)
+
+    def test_in_bbox_filter_list_view(self):
+        StationFactory.create(position=Point([20, 50]))
+        StationFactory.create(position=Point([21, 51]))
+        StationFactory.create(position=Point([0, 0]))
+
+        api_response = self.client.get(
+            self.station_list_url,
+            data={
+                'in_bbox': '19, 49, 22, 52'
+            }
+        )
+        self.assertEqual(2, len(api_response.data['results']))

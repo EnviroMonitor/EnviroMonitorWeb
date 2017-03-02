@@ -5,8 +5,10 @@ from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework import response, schemas
+from rest_framework.settings import api_settings
 from rest_framework.decorators import detail_route
 from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
+from rest_framework_gis.filters import InBBoxFilter
 from rest_framework_jwt.views import ObtainJSONWebToken
 
 from .models import Station, Metering, Project
@@ -22,9 +24,12 @@ class ObtainJWT(ObtainJSONWebToken):
 class StationViewSet(ModelViewSet):
     """ViewSet for the Station class"""
 
+    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [InBBoxFilter]
     queryset = Station.objects.all()
     serializer_class = StationSerializer
     filter_class = StationFilterSet
+    ordering_fields = ('updated', 'created', 'name')
+    bbox_filter_field = 'position'
 
     @detail_route(methods=['post'], permission_classes=[AllowAny], url_path='add-metering')
     def add_metering(self, request, pk=None):
@@ -55,14 +60,18 @@ class MeteringViewSet(ModelViewSet):
     queryset = Metering.objects.all()
     serializer_class = MeteringSerializer
     filter_class = MeteringFilterSet
+    ordering_fields = ('created',)
 
 
 class ProjectViewSet(ModelViewSet):
     """ViewSet for the Project class"""
 
+    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [InBBoxFilter]
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     filter_class = ProjectFilterSet
+    ordering_fields = ('updated', 'created', 'name')
+    bbox_filter_field = 'position'
 
 
 @api_view()
