@@ -7,17 +7,17 @@ class StationFilterSet(FilterSet):
     class Meta:
         model = Station
         fields = {
-            'name': ['icontains'],
+            'name': ['exact', 'icontains'],
             'is_in_test_mode': ['exact'],
-            'country': ['icontains'],
-            'state': ['icontains'],
-            'county': ['icontains'],
-            'community': ['icontains'],
-            'city': ['icontains'],
-            'district': ['icontains'],
+            'country': ['exact', 'icontains'],
+            'state': ['exact', 'icontains'],
+            'county': ['exact', 'icontains'],
+            'community': ['exact', 'icontains'],
+            'city': ['exact', 'icontains'],
+            'district': ['exact', 'icontains'],
             'owner': ['exact'],
             'project': ['exact'],
-            'project__name': ['icontains'],
+            'project__name': ['exact', 'icontains'],
             'created': ['lte', 'gte'],
             'updated': ['lte', 'gte'],
         }
@@ -45,13 +45,13 @@ class ProjectFilterSet(FilterSet):
     class Meta:
         model = Project
         fields = {
-            'name': ['icontains'],
-            'country': ['icontains'],
-            'state': ['icontains'],
-            'county': ['icontains'],
-            'community': ['icontains'],
-            'city': ['icontains'],
-            'district': ['icontains'],
+            'name': ['exact', 'icontains'],
+            'country': ['exact', 'icontains'],
+            'state': ['exact', 'icontains'],
+            'county': ['exact', 'icontains'],
+            'community': ['exact', 'icontains'],
+            'city': ['exact', 'icontains'],
+            'district': ['exact', 'icontains'],
             'owner': ['exact'],
             'created': ['lte', 'gte'],
             'updated': ['lte', 'gte'],

@@ -24,7 +24,6 @@ class UserAuthBase(APITestCase):
     def setUp(self):
         self.user = UserFactory()
         self.jwt_url = reverse('api-token-auth')
-
         self.user_data = {
             'username': self.user.username,
             'password': UserFactory.DEFAULT_PASSWORD
@@ -116,7 +115,7 @@ class ProjectApiTests(UserAuthBase):
         self.assertEqual(api_response.status_code, HTTP_204_NO_CONTENT)
         self.assertEqual(Project.objects.count(), 0)
 
-    def test_in_bbox_filter_list_view(self):
+    def test_list_view_filter_in_bbox(self):
         ProjectFactory.create(position=Point([20, 50]))
         ProjectFactory.create(position=Point([21, 51]))
         ProjectFactory.create(position=Point([0, 0]))
@@ -125,6 +124,48 @@ class ProjectApiTests(UserAuthBase):
             self.project_list_url,
             data={
                 'in_bbox': '19, 49, 22, 52'
+            }
+        )
+        self.assertEqual(2, len(api_response.data['results']))
+
+    def test_list_view_filter_owner(self):
+        owner = UserFactory()
+        ProjectFactory.create(owner=owner)
+        ProjectFactory.create(owner=owner)
+        ProjectFactory.create()
+
+        api_response = self.client.get(
+            self.project_list_url,
+            data={
+                'owner': owner.pk
+            }
+        )
+        self.assertEqual(2, len(api_response.data['results']))
+
+    def test_list_view_filter_country(self):
+        country = 'Polska'
+        ProjectFactory.create(country=country)
+        ProjectFactory.create(country=country)
+        ProjectFactory.create(country='Niemcy')
+
+        api_response = self.client.get(
+            self.project_list_url,
+            data={
+                'country': country
+            }
+        )
+        self.assertEqual(2, len(api_response.data['results']))
+
+    def test_list_view_filter_country_icontains(self):
+        country = 'Polska'
+        ProjectFactory.create(country=country)
+        ProjectFactory.create(country=country)
+        ProjectFactory.create(country='Niemcy')
+
+        api_response = self.client.get(
+            self.project_list_url,
+            data={
+                'country__icontains': 'pols'
             }
         )
         self.assertEqual(2, len(api_response.data['results']))
@@ -219,7 +260,7 @@ class StationApiTests(UserAuthBase):
         api_response = self.client.post(add_metering_api_url, {})
         self.assertEqual(api_response.status_code, 400)
 
-    def test_in_bbox_filter_list_view(self):
+    def test_list_view_filter_in_bbox(self):
         StationFactory.create(position=Point([20, 50]))
         StationFactory.create(position=Point([21, 51]))
         StationFactory.create(position=Point([0, 0]))
