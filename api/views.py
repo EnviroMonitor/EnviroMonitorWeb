@@ -1,21 +1,20 @@
 from django.core.cache import cache
+from rest_framework import response, schemas
 from rest_framework.authentication import BasicAuthentication
-from rest_framework.filters import SearchFilter
+from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.decorators import detail_route
 from rest_framework.permissions import AllowAny
+from rest_framework.settings import api_settings
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import api_view, renderer_classes
-from rest_framework import response, schemas
-from rest_framework.settings import api_settings
-from rest_framework.decorators import detail_route
-from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 from rest_framework_gis.filters import InBBoxFilter
 from rest_framework_jwt.views import ObtainJSONWebToken
+from rest_framework_swagger.renderers import OpenAPIRenderer, SwaggerUIRenderer
 
+from .exceptions import StationWrongToken
+from .filters import StationFilterSet, MeteringFilterSet, MeteringHistoryFilterSet, ProjectFilterSet
 from .models import Station, Metering, MeteringHistory, Project
 from .serializers import StationSerializer, MeteringSerializer, MeteringHistorySerializer, ProjectSerializer
-from .filters import StationFilterSet, MeteringFilterSet, MeteringHistoryFilterSet, ProjectFilterSet
-from .exceptions import StationWrongToken
 
 
 class ObtainJWT(ObtainJSONWebToken):
