@@ -25,13 +25,12 @@ class ObtainJWT(ObtainJSONWebToken):
 class StationViewSet(ModelViewSet):
     """ViewSet for the Station class"""
 
-    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [InBBoxFilter, SearchFilter]
+    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [InBBoxFilter]
     queryset = Station.objects.all()
     serializer_class = StationSerializer
     filter_class = StationFilterSet
     ordering_fields = ('updated', 'created', 'name')
     bbox_filter_field = 'position'
-    search_fields = ('name',)
 
     @detail_route(methods=['post'], permission_classes=[AllowAny], url_path='add-metering')
     def add_metering(self, request, pk=None):
@@ -77,13 +76,12 @@ class MeteringHistoryViewSet(ModelViewSet):
 class ProjectViewSet(ModelViewSet):
     """ViewSet for the Project class"""
 
-    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [InBBoxFilter, SearchFilter]
+    filter_backends = api_settings.DEFAULT_FILTER_BACKENDS + [InBBoxFilter]
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     filter_class = ProjectFilterSet
     ordering_fields = ('updated', 'created', 'name')
     bbox_filter_field = 'position'
-    search_fields = ('name',)
 
 
 @api_view()
