@@ -143,10 +143,10 @@ class ProjectApiTests(UserAuthBase):
         self.assertEqual(2, len(api_response.data['results']))
 
     def test_list_view_filter_country(self):
-        country = 'Polska'
+        country = 'Poland'
         ProjectFactory.create(country=country)
         ProjectFactory.create(country=country)
-        ProjectFactory.create(country='Niemcy')
+        ProjectFactory.create(country='Germany')
 
         api_response = self.client.get(
             self.project_list_url,
@@ -157,15 +157,15 @@ class ProjectApiTests(UserAuthBase):
         self.assertEqual(2, len(api_response.data['results']))
 
     def test_list_view_filter_country_icontains(self):
-        country = 'Polska'
+        country = 'Poland'
         ProjectFactory.create(country=country)
         ProjectFactory.create(country=country)
-        ProjectFactory.create(country='Niemcy')
+        ProjectFactory.create(country='Germany')
 
         api_response = self.client.get(
             self.project_list_url,
             data={
-                'country__icontains': 'pols'
+                'country__icontains': 'pol'
             }
         )
         self.assertEqual(2, len(api_response.data['results']))
@@ -234,9 +234,7 @@ class StationApiTests(UserAuthBase):
     def test_add_metering_no_token(self):
         station = StationFactory.create()
 
-        add_metering_api_url = '{}'.format(
-            reverse('station-add-metering', kwargs={'pk': station.pk}),
-        )
+        add_metering_api_url = reverse('station-add-metering', kwargs={'pk': station.pk})
         api_response = self.client.post(add_metering_api_url, {})
         self.assertEqual(api_response.status_code, 403)
 
