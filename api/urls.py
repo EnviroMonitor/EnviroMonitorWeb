@@ -1,13 +1,12 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 
-from .views import StationViewSet, MeteringViewSet, ProjectViewSet, schema_view, ObtainJWT
-
-
+from .views import StationViewSet, MeteringViewSet, MeteringHistoryViewSet, ProjectViewSet, schema_view, ObtainJWT
 
 router = routers.DefaultRouter()
 router.register(r'station', StationViewSet)
 router.register(r'metering', MeteringViewSet)
+router.register(r'meteringshistory', MeteringHistoryViewSet)
 router.register(r'project', ProjectViewSet)
 
 urlpatterns = (
