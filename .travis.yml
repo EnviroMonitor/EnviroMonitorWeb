@@ -3,7 +3,7 @@ sudo: required
 language: python
 
 python:
-  - "3.5"
+    - "3.5"
 
 services:
     - docker
@@ -24,3 +24,5 @@ before_install:
 script:
     - docker-compose run --rm test
 
+addons:
+    srcclr: true
