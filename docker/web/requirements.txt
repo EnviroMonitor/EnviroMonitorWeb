@@ -2,6 +2,7 @@ django-crispy-forms==1.6.1
 django-extensions==1.7.5
 django-filter==1.0.1
 django-geoposition==0.3.0
+django-cors-headers==2.0.2
 django-rest-swagger==2.1.1
 Django>=1.10,<1.11
 djangorestframework-gis==0.11.0

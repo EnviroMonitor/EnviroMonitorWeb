@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     'django_filters',
     'django_extensions',
     'geoposition',
+    'corsheaders',
     'api',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -140,10 +142,12 @@ CACHES = {
         'LOCATION': 'smogly'
     }
 }
-# User settings
 
 # Provide your API key to Google Maps
 GEOPOSITION_GOOGLE_MAPS_API_KEY = ''
+
+# django-rest-framework
+# http://www.django-rest-framework.org/api-guide/settings/
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
@@ -165,3 +169,10 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
+# django-cors-headers
+# https://github.com/ottoyiu/django-cors-headers#configuration
+
+CORS_ORIGIN_WHITELIST = (
+    'localhost:8080',
+    'localhost:8000',
+)
