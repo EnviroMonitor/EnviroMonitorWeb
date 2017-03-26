@@ -81,6 +81,9 @@ class AbstractMetering(models.Model):
     bpress_out1 = models.FloatField(
         help_text='Outside absolute barometric pressure sensor1, in hPa.'
     )
+    hw_id = models.CharField(
+        help_text='Unique ID of station hardware that created Metering.', max_length=255, default=''
+    )
 
     # Relationship Fields
     station = models.ForeignKey('api.Station')

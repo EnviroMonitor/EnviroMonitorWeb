@@ -136,6 +136,7 @@ class AbstractMeteringFactory(factory.django.DjangoModelFactory):
     hum_int_air1 = FuzzyFloatRound(30.0, 35.0, ndigits=2)
     rssi = FuzzyFloatRound(-100.0, 0.0, ndigits=2)
     bpress_out1 = factory.fuzzy.FuzzyInteger(900, 1100)
+    hw_id = factory.Faker('uuid4')
 
     station = factory.SubFactory(StationFactory)
 

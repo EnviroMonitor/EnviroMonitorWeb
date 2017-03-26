@@ -5,7 +5,9 @@ from rest_framework.status import (
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
     HTTP_401_UNAUTHORIZED,
-    HTTP_404_NOT_FOUND
+    HTTP_400_BAD_REQUEST,
+    HTTP_404_NOT_FOUND,
+    HTTP_403_FORBIDDEN
 )
 from rest_framework.test import APITestCase
 
@@ -210,54 +212,6 @@ class StationApiTests(UserAuthBase):
         self.assertStationDataEqual(created_station_data)
         self.assertEqual(created_station.owner, self.user)
 
-    def test_add_metering(self):
-        station = StationFactory.create()
-
-        metering = MeteringFactory.build(station=None)
-        metering_data = MeteringSerializer(metering).data
-
-        # test cache key removal before add_metering
-        self.assertEqual(station.last_metering, MeteringSerializer(None).data)
-
-        self.assertEqual(station.metering_set.count(), 0)
-        add_metering_api_url = '{}?token={}'.format(
-            reverse('station-add-metering', kwargs={'pk': station.pk}),
-            station.token
-        )
-        api_response = self.client.post(add_metering_api_url, metering_data)
-        self.assertEqual(api_response.status_code, 200)
-        self.assertEqual(station.metering_set.count(), 1)
-
-        # test cache key removal after add_metering
-        self.assertEqual(station.last_metering, MeteringSerializer(station.metering_set.first()).data)
-
-    def test_add_metering_no_token(self):
-        station = StationFactory.create()
-
-        add_metering_api_url = reverse('station-add-metering', kwargs={'pk': station.pk})
-        api_response = self.client.post(add_metering_api_url, {})
-        self.assertEqual(api_response.status_code, 403)
-
-    def test_add_metering_wrong_token(self):
-        station = StationFactory.create()
-
-        add_metering_api_url = '{}?token={}'.format(
-            reverse('station-add-metering', kwargs={'pk': station.pk}),
-            'xyz'
-        )
-        api_response = self.client.post(add_metering_api_url, {})
-        self.assertEqual(api_response.status_code, 403)
-
-    def test_add_metering_wrong_data(self):
-        station = StationFactory.create()
-
-        add_metering_api_url = '{}?token={}'.format(
-            reverse('station-add-metering', kwargs={'pk': station.pk}),
-            station.token
-        )
-        api_response = self.client.post(add_metering_api_url, {})
-        self.assertEqual(api_response.status_code, 400)
-
     def test_list_view_filter_in_bbox(self):
         StationFactory.create(position=Point([20, 50]))
         StationFactory.create(position=Point([21, 51]))
@@ -270,3 +224,43 @@ class StationApiTests(UserAuthBase):
             }
         )
         self.assertEqual(2, len(api_response.data['results']))
+
+
+class MeteringApiTests(UserAuthBase):
+    def setUp(self):
+        self.existing_project = ProjectFactory.create()
+        self.existing_station = StationFactory.create(project=self.existing_project)
+        self.metering = MeteringFactory.build(station=self.existing_station)
+        self.metering_data = MeteringSerializer(self.metering).data
+        self.metering_list_url = reverse('metering-list')
+        return super(MeteringApiTests, self).setUp()
+
+    def test_add_metering(self):
+        # test cache key removal before add_metering
+        self.assertEqual(self.existing_station.last_metering, MeteringSerializer(None).data)
+        self.assertEqual(self.existing_station.metering_set.count(), 0)
+
+        metering_data = self.metering_data.copy()
+        metering_data['token'] = self.existing_station.token
+        api_response = self.client.post(self.metering_list_url, metering_data)
+
+        self.assertEqual(api_response.status_code, HTTP_201_CREATED)
+        self.assertEqual(self.existing_station.metering_set.count(), 1)
+
+        # test cache key removal after add_metering
+        self.assertEqual(
+            self.existing_station.last_metering,
+            MeteringSerializer(self.existing_station.metering_set.first()).data
+        )
+
+    def test_add_metering_no_token(self):
+        api_response = self.client.post(self.metering_list_url, {})
+        self.assertEqual(api_response.status_code, HTTP_403_FORBIDDEN)
+
+    def test_add_metering_wrong_token(self):
+        api_response = self.client.post(self.metering_list_url, {'token': 'xyz'})
+        self.assertEqual(api_response.status_code, HTTP_403_FORBIDDEN)
+
+    def test_add_metering_wrong_data(self):
+        api_response = self.client.post(self.metering_list_url, {'token': self.existing_station.token})
+        self.assertEqual(api_response.status_code, HTTP_400_BAD_REQUEST)

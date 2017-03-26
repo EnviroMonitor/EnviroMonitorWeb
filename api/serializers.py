@@ -34,6 +34,7 @@ class MeteringSerializer(ModelSerializer):
     class Meta:
         model = Metering
         fields = (
+            'station',
             'created',
             'pm01',
             'pm25',
@@ -48,6 +49,7 @@ class MeteringSerializer(ModelSerializer):
             'hum_int_air1',
             'rssi',
             'bpress_out1',
+            'hw_id',
         )
 
 

@@ -1,11 +1,11 @@
 from django.core.cache import cache
 from rest_framework import response, schemas
 from rest_framework.authentication import BasicAuthentication
-from rest_framework.decorators import api_view, renderer_classes
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from rest_framework.settings import api_settings
-from rest_framework.status import HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_201_CREATED
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_gis.filters import InBBoxFilter
 from rest_framework_jwt.views import ObtainJSONWebToken
@@ -31,28 +31,6 @@ class StationViewSet(ModelViewSet):
     ordering_fields = ('updated', 'created', 'name')
     bbox_filter_field = 'position'
 
-    @detail_route(methods=['post'], permission_classes=[AllowAny], url_path='add-metering')
-    def add_metering(self, request, pk=None):
-        station = self.get_object()
-        request_token = request.query_params.get('token')
-        if request_token is None or station.token != request_token:
-            raise StationWrongToken
-
-        metering_serializer = MeteringSerializer(data=request.data)
-        if metering_serializer.is_valid():
-            # create Metering from selected station and provided data
-            Metering.objects.create(station=station, **metering_serializer.data)
-            # remove last_metering cache key
-            cache.delete(station.last_metering_cache_key)
-            return response.Response({
-                'status': 'metering added'
-            })
-
-        return response.Response(
-            metering_serializer.errors,
-            status=HTTP_400_BAD_REQUEST
-        )
-
 
 class MeteringViewSet(ModelViewSet):
     """ViewSet for the Metering class"""
@@ -61,6 +39,33 @@ class MeteringViewSet(ModelViewSet):
     serializer_class = MeteringSerializer
     filter_class = MeteringFilterSet
     ordering_fields = ('created',)
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        try:
+            token = data.pop('token')
+        except KeyError:
+            raise StationWrongToken
+        else:
+            try:
+                station = Station.objects.get(token=token)
+            except Station.DoesNotExist:
+                raise StationWrongToken
+            else:
+                data['station'] = station.pk
+                serializer = self.get_serializer(data=data)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                cache.delete(station.last_metering_cache_key)
+                headers = self.get_success_headers(serializer.data)
+                return Response(serializer.data, status=HTTP_201_CREATED, headers=headers)
+
+    # permission_classes decorator seems not to be working for create, update, list and other base actions
+    # http://stackoverflow.com/a/30624527/479931
+    def get_permissions(self):
+        if self.action in ('create',):
+            self.permission_classes = [AllowAny]
+        return super(self.__class__, self).get_permissions()
 
 
 class MeteringHistoryViewSet(ModelViewSet):
