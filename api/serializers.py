@@ -1,10 +1,10 @@
-from rest_framework.serializers import ModelSerializer, HiddenField, CurrentUserDefault
+from rest_framework import  serializers
 
 from .models import Station, Metering, Project, MeteringHistory
 
 
-class StationSerializer(ModelSerializer):
-    owner = HiddenField(default=CurrentUserDefault())
+class StationSerializer(serializers.ModelSerializer):
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Station
@@ -30,7 +30,16 @@ class StationSerializer(ModelSerializer):
         )
 
 
-class MeteringSerializer(ModelSerializer):
+class MeteringSerializer(serializers.ModelSerializer):
+    temp_out2 = serializers.FloatField(default=None, write_only=True)
+    temp_out3 = serializers.FloatField(default=None, write_only=True)
+    hum_out2 = serializers.FloatField(default=None, write_only=True)
+    hum_out3 = serializers.FloatField(default=None, write_only=True)
+    temp_int_air1 = serializers.FloatField(default=None, write_only=True)
+    hum_int_air1 = serializers.FloatField(default=None, write_only=True)
+    rssi = serializers.FloatField(default=None, write_only=True)
+    bpress_out1 = serializers.FloatField(default=None, write_only=True)
+
     class Meta:
         model = Metering
         fields = (
@@ -53,13 +62,13 @@ class MeteringSerializer(ModelSerializer):
         )
 
 
-class MeteringHistorySerializer(ModelSerializer):
+class MeteringHistorySerializer(serializers.ModelSerializer):
     class Meta(MeteringSerializer.Meta):
         model = MeteringHistory
 
 
-class ProjectSerializer(ModelSerializer):
-    owner = HiddenField(default=CurrentUserDefault())
+class ProjectSerializer(serializers.ModelSerializer):
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Project

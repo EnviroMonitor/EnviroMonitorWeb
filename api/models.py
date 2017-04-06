@@ -55,10 +55,16 @@ class AbstractMetering(models.Model):
         null=True
     )
     temp_int_air1 = models.FloatField(
-        help_text='Internal temperature sensor1 (air sucked by PM sensor), in C.'
+        help_text='Internal temperature sensor1 (air sucked by PM sensor), in C.',
+        blank=True,
+        default=None,
+        null=True
     )
     hum_out1 = models.FloatField(
-        help_text='Outside relative humidity sensor1, in %.'
+        help_text='Outside relative humidity sensor1, in %.',
+        blank=True,
+        default=None,
+        null=True
     )
     hum_out2 = models.FloatField(
         help_text='Outside relative humidity sensor2, optional, in %.',
@@ -73,13 +79,22 @@ class AbstractMetering(models.Model):
         null=True
     )
     hum_int_air1 = models.FloatField(
-        help_text='Internal relative humidity sensor1 (air sucked by PM sensor), in %.'
+        help_text='Internal relative humidity sensor1 (air sucked by PM sensor), in %.',
+        blank=True,
+        default=None,
+        null=True
     )
     rssi = models.FloatField(
-        help_text='RSSI of WiFi (signal strength). For debugging "vanishing" stations.'
+        help_text='RSSI of WiFi (signal strength). For debugging "vanishing" stations.',
+        blank=True,
+        default=None,
+        null=True
     )
     bpress_out1 = models.FloatField(
-        help_text='Outside absolute barometric pressure sensor1, in hPa.'
+        help_text='Outside absolute barometric pressure sensor1, in hPa.',
+        blank=True,
+        default=None,
+        null=True
     )
     hw_id = models.CharField(
         help_text='Unique ID of station hardware that created Metering.', max_length=255, default=''
