@@ -30,16 +30,16 @@ class AbstractMetering(models.Model):
     created = models.DateTimeField(auto_now_add=True, db_index=True)
 
     # Data Fields
-    pm01 = models.FloatField(
+    pm01 = models.IntegerField(
         help_text='PM 0.1 in ug/m^3',
         blank=True,
         default=None,
         null=True
     )
-    pm25 = models.FloatField(
+    pm25 = models.IntegerField(
         help_text='PM 2.5 in ug/m^3'
     )
-    pm10 = models.FloatField(
+    pm10 = models.IntegerField(
         help_text='PM 10 in ug/m^3'
     )
     temp_out1 = models.FloatField(
