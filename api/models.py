@@ -31,7 +31,10 @@ class AbstractMetering(models.Model):
 
     # Data Fields
     pm01 = models.FloatField(
-        help_text='PM 0.1 in ug/m^3'
+        help_text='PM 0.1 in ug/m^3',
+        blank=True,
+        default=None,
+        null=True
     )
     pm25 = models.FloatField(
         help_text='PM 2.5 in ug/m^3'
@@ -40,7 +43,10 @@ class AbstractMetering(models.Model):
         help_text='PM 10 in ug/m^3'
     )
     temp_out1 = models.FloatField(
-        help_text='Outside temperature sensor1, in C.'
+        help_text='Outside temperature sensor1, in C.',
+        blank=True,
+        default=None,
+        null=True
     )
     temp_out2 = models.FloatField(
         help_text='Outside temperature sensor2, optional, in C.',
@@ -97,7 +103,11 @@ class AbstractMetering(models.Model):
         null=True
     )
     hw_id = models.CharField(
-        help_text='Unique ID of station hardware that created Metering.', max_length=255, default=''
+        help_text='Unique ID of station hardware that created Metering.',
+        max_length=255,
+        blank=True,
+        default=None,
+        null=True
     )
 
     # Relationship Fields

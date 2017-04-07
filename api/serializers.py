@@ -31,11 +31,12 @@ class StationSerializer(serializers.ModelSerializer):
 
 
 class MeteringSerializer(serializers.ModelSerializer):
+    pm01 = serializers.FloatField(default=None, write_only=True)
     temp_out2 = serializers.FloatField(default=None, write_only=True)
     temp_out3 = serializers.FloatField(default=None, write_only=True)
+    temp_int_air1 = serializers.FloatField(default=None, write_only=True)
     hum_out2 = serializers.FloatField(default=None, write_only=True)
     hum_out3 = serializers.FloatField(default=None, write_only=True)
-    temp_int_air1 = serializers.FloatField(default=None, write_only=True)
     hum_int_air1 = serializers.FloatField(default=None, write_only=True)
     rssi = serializers.FloatField(default=None, write_only=True)
     bpress_out1 = serializers.FloatField(default=None, write_only=True)
