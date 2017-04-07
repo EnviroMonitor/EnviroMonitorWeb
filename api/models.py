@@ -142,18 +142,20 @@ class Station(AbstractTimeTrackable, AbstractLocation):
     Model representing sensor station. Can be grouped using Project model.
     """
 
-    EM0 = '1'
-    EM1 = '2'
-    CUSTOM = '3'
+    TYPE_SMOGLY = 'smogly'
+    TYPE_CUSTOM = 'custom'
+    TYPE_AQICN = 'aqicn'
+    TYPE_BASIC_SDS011 = 'basic-sds011'
     TYPE_CHOICES = (
-        (EM0, 'EM0.1'),
-        (EM1, 'EM1'),
-        (CUSTOM, 'CUSTOM'),
+        (TYPE_SMOGLY, 'SMOGLY'),
+        (TYPE_CUSTOM, 'CUSTOM'),
+        (TYPE_AQICN, 'AQICN'),
+        (TYPE_BASIC_SDS011, 'BASIC-SDS011'),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
-    type = models.CharField(max_length=1, choices=TYPE_CHOICES)
+    type = models.CharField(max_length=30, choices=TYPE_CHOICES, default=TYPE_SMOGLY)
     notes = models.CharField(max_length=255)
     is_in_test_mode = models.BooleanField(
         help_text='Whether sensor is in test mode or not (all data).',
